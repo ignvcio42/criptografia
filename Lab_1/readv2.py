@@ -89,11 +89,17 @@ def read_pcapng_file(filename):
     icmp_packets = [p for p in packets if ICMP in p]
     id_dict = {}
     for packet in icmp_packets:
-        if packet[ICMP].id in id_dict:
-            id_dict[packet[ICMP].id] += packet[Raw].load.decode('utf-8')[0]
-        else:
-            id_dict[packet[ICMP].id] = packet[Raw].load.decode('utf-8')[0]
+        try:
+            payload = packet[Raw].load.decode('utf-8')
+            if packet[ICMP].id in id_dict:
+                id_dict[packet[ICMP].id] += payload[0]  # Solo el primer carácter
+            else:
+                id_dict[packet[ICMP].id] = payload[0]  # Solo el primer carácter
+        except UnicodeDecodeError:
+            # Manejar el caso en el que la carga no se puede decodificar en UTF-8
+            pass
     return id_dict
+
 
 
 if __name__ == '__main__':
