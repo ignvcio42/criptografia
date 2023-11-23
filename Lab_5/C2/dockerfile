@@ -1,9 +1,10 @@
 FROM ubuntu:16.10
 
-#Actualizar Source List
+# Actualizar Source List
 RUN sed -i 's/archive.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
 
-#Eliminar el repositorio de seguridad que causaba problemas 
-RUN sed -i '/security.ubuntu.com/s/ˆ/#/' /etc/apt/sources.list
-#Instalar cliente de OpenSSH
+# Eliminar el repositorio de seguridad que causaba problemas
+RUN sed -i '/security.ubuntu.com/s/^/#/' /etc/apt/sources.list
+
+# Instalar cliente de OpenSSH
 RUN apt-get update && apt-get install -y sudo net-tools openssh-client

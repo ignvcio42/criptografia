@@ -1,15 +1,16 @@
 FROM ubuntu:20.10
 
-COPY sources.list /etc/apt/sources.list
+# Ajustar Source List
+RUN sed -i 's/archive/old-releases/g' /etc/apt/sources.list
+RUN sed -i '/^deb.*security.ubuntu.com/s/^/#/' /etc/apt/sources.list
 
-RUN apt update && apt install openssh-server sudo -y
+# Instalar cliente SSH, servidor SSH y Tshark
+RUN apt update && \
+    apt install -y sudo net-tools openssh-client openssh-server tshark
 
-RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 test 
+# Agregar Usuario Test con contraseña test
+RUN useradd -m test && \
+    echo 'test:test' | chpasswd
 
-RUN echo 'test:test' | chpasswd
-
-RUN service ssh start
-
+# Abrir puerto 22 para conexiones
 EXPOSE 22
-
-CMD ["/usr/sbin/sshd","-D"]
