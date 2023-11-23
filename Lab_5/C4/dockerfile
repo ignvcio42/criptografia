@@ -1,9 +1,15 @@
 FROM ubuntu:20.10
 
-COPY sources.list /etc/apt/sources.list
+#Ajustar Source List
+RUN sed -i 's/archive/old-releases/g' /etc/apt/sources.list
+RUN sed -i '/dˆeb.*security.ubuntu.com/s/ˆ/#/' /etc/apt/sources.list
+#Instalar cliente SSH, servidor SSH y Tshark
+RUN apt update && apt install -y sudo net-tools openssh-client 
+RUN apt install -y sudo openssh-server
+RUN apt install -y tshark
+#Agregar Usuario Test con contrasen˜a test 
+RUN adduser test
+RUN echo 'test:test' — chpasswd
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y openssh-client neovim
-
-CMD ["bash"]
+#Abrir puerto 22 para conexiones 
+EXPOSE 22
